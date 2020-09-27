@@ -130,13 +130,13 @@
   "Rename tag from `before' to `after' on file."
   (org-roam--with-file file
   (let (to-write)
-    (find-file-noselect file)
+    (with-current-buffer (find-file-noselect file)
     (setq to-write (org-roam--buffer-find-and-rename-tag before after))
     (goto-char (point-min))
     (re-search-forward "^#\\+roam_tags:.*" nil t)
     (replace-match to-write)
     (save-buffer)
-    )))
+    ))))
 
 (defun org-roam-rename-tag (before after)
   "Rename tag from `before' to `after' on all org roam files.
