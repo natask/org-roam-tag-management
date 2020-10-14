@@ -5,7 +5,7 @@
 ;; Author: Natnael Kahssay <thisnkk@gmail.com>
 ;; URL: https://github.com/natask/org-roam
 ;; Keywords: org-mode, roam, convenience
-;; Version: 1.2.1
+;; Version: 1.2.2
 ;; Package-Requires: ((emacs "26.1") (dash "2.13") (f "0.17.2") (s "1.12.0") (org "9.3") (emacsql "3.0.0") (emacsql-sqlite3 "1.0.2"))
 
 ;; This file is NOT part of GNU Emacs.
@@ -31,6 +31,17 @@
 ;;; Code:
 ;;;; Library Requires
 (require 'org-roam-db)
+
+(defmacro org-roam--with-file (file &rest body)
+  "Execute BODY within a FILE.
+Closes the file if the file is not yet visited."
+  (declare (indent 1) (debug t))
+  `(let* ((existing-buf (find-buffer-visiting ,file))
+          (res ,@body))
+     ;; find-buffer-visiting needs to be recomputed because it was created by
+     ;; @body
+     (unless existing-buf (kill-buffer (find-buffer-visiting ,file)))
+     res))
 
 ;;; variables
 (defcustom org-roam-tag-data-types '(
