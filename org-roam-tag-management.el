@@ -32,17 +32,6 @@
 ;;;; Library Requires
 (require 'org-roam-db)
 
-(defmacro org-roam--with-file (file &rest body)
-  "Execute BODY within a FILE.
-Closes the file if the file is not yet visited."
-  (declare (indent 1) (debug t))
-  `(let* ((existing-buf (find-buffer-visiting ,file))
-          (res ,@body))
-     ;; find-buffer-visiting needs to be recomputed because it was created by
-     ;; @body
-     (unless existing-buf (kill-buffer (find-buffer-visiting ,file)))
-     res))
-
 ;;; variables
 (defcustom org-roam-tag-data-types '(
                                   (fuzzy . ((format . "%%%s%%")
@@ -139,7 +128,7 @@ Closes the file if the file is not yet visited."
 
 (defun org-roam--open-file-rename-tag-and-close-file (file before after)
   "Rename tag from `before' to `after' on file."
-  (org-roam--with-file file
+  (org-roam-with-file file nil
   (let (to-write)
     (with-current-buffer (find-file-noselect file)
     (setq to-write (org-roam--buffer-find-and-rename-tag before after))
